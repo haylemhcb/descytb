@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
   gtk_window_set_title(GTK_WINDOW(win.w), "descytb de Haylem Candelario Bauza");
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT(win.cmb), "baja", "Calidad baja");
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT(win.cmb), "alta", "Calidad alta");
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT(win.cmb), "maxima", "Calidad max");
   gtk_combo_box_set_active (GTK_COMBO_BOX(win.cmb), 0);
   gtk_spinner_stop(GTK_SPINNER(win.spn));
 
@@ -106,12 +107,17 @@ gpointer hilo_desc (gpointer user_data)
   if(strcmp(vars.fmt, "Calidad baja") == 0)
     strcpy(vars.fmt, "'bv*[height<=360]+ba'");
 
+  if(strcmp(vars.fmt, "Calidad max") == 0)
+    strcpy(vars.fmt, "bv*+ba");
+
   if(strcmp(vars.fmt, "Calidad alta") == 0)
     strcpy(vars.fmt, "'bv*[height>=720]+ba'");
 
   gtk_spinner_start(GTK_SPINNER(win.spn));
 
-  sprintf(cmd, "yt-dlp -f %s '%s'", vars.fmt, vars.url);
+  system("pkill yt-dlp");
+
+  sprintf(cmd, "DIR=\"$(dirname \"$(readlink -f \"${0}\")\")\"; \"$DIR/yt-dlp\" -f %s '%s'", vars.fmt, vars.url);
   system(cmd);
   gtk_spinner_stop(GTK_SPINNER(win.spn));
 
